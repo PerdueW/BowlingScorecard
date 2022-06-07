@@ -1,0 +1,158 @@
+#!/usr/bin/python3
+
+import os
+import sys
+from tkinter import *
+import tkinter as tk
+import re
+import tkFont
+
+sizex = 1430
+sizey = 495
+posx  = 0
+posy  = 0
+
+oWsizex = 275
+oWsizey = 100
+oWposx  = 0
+oWposy  = 0
+       
+class bowling:
+    def __init__(self, root):
+        
+        self.helv8 = tkFont.Font(family="Helvetica", size=8)
+        self.helv8b = tkFont.Font(family="Helvetica", size=8, weight="bold")   
+        self.helv9 = tkFont.Font(family="Helvetica", size=9)
+        self.helv9b = tkFont.Font(family="Helvetica", size=9, weight="bold")    
+        self.helv10 = tkFont.Font(family="Helvetica", size=10)
+        self.helv10b = tkFont.Font(family="Helvetica", size=10, weight="bold")
+        self.helv11 = tkFont.Font(family="Helvetica", size=11)
+        self.helv11b = tkFont.Font(family="Helvetica", size=11, weight="bold")
+        self.helv12 = tkFont.Font(family="Helvetica", size=12)
+        self.helv12b = tkFont.Font(family="Helvetica", size=12, weight="bold")
+        self.helv13 = tkFont.Font(family="Helvetica", size=13)
+        self.helv13b = tkFont.Font(family="Helvetica", size=13, weight="bold")
+        
+        canvas = Canvas(root, width=1310, height=490, bg="plum")
+        canvas.grid(row=0, column=0, padx=3, pady=3)
+ 
+        for i in range(1,11):
+                """
+                This function creates the headers for the scoring screen
+                """
+                gameLabel = tk.Label(canvas, text="GAME 1 ", width=14, height=2, borderwidth=1, bg="pink", font=self.helv11b, relief=RAISED)
+                gameLabel.grid(row=0, column=0, padx=2, pady=2, sticky="NESW")
+                roundLabel = tk.Label(canvas, text="Round " + str(i), width=11, height=2, borderwidth=1, bg="pink", font=self.helv11b, relief=RAISED)
+                roundLabel.grid(row=0, column=i, padx=2, pady=2, sticky="NESW")
+                i = i + 1
+                finalLabel = tk.Label(canvas, text="Total", width=11, height=2, borderwidth=1, bg="pink", font=self.helv11b, relief=RAISED)
+                finalLabel.grid(row=0, column=11, padx=2, pady=2, sticky="NESW")
+
+        nameButtons = []
+        for row in range(1,6):
+                """
+                This function creates the Name burrons for the scoring screen
+                """
+                buttonCords = []
+                for column in range(1,12):
+                        nameButton = tk.Button(canvas, text="", command=lambda row=row, column=0: setplayerName(row, column), width=14, height=3, bg="pink", font=self.helv11b, relief=RAISED)
+                        nameButton.grid(row=row, column=0, padx=2, pady=2, sticky="NESW")
+                        buttonCords.append(nameButton)
+                nameButtons.append(buttonCords)
+  
+        for i in range(1,6):
+                """
+                This function creates the game result frames for the scoring screen
+                """
+                resultLabel = tk.Label(canvas, text=" ", width=10, height=3, bg="pink", font=self.helv11b, relief=RAISED)
+                resultLabel.grid(row=i, column=11, padx=2, pady=2, sticky="NESW")
+
+
+        scoreFrames = []       
+        for i in range(1,6):
+                """
+                This function creates the round roll result frames for the scoring screen 
+                """
+                frameCords = []
+                for j in range(1,11):
+                        roundFrame = tk.Frame(canvas, width=10, height=4, bg="pink", relief=RAISED)
+                        roundFrame.grid(row=i, column=j, padx=2, pady=2, sticky="NESW")
+                        firstthrowButton = tk.Button(roundFrame, text="", command=lambda row=i, column=j: alterbuttons(row, column), width=5, height=1, bg="pink", font=self.helv11b, relief=RAISED)
+                        firstthrowButton.grid(row=0, column=0, padx=1, pady=1, sticky="NESW")
+                        secondthrowButton = tk.Button(roundFrame, text="", command=lambda row=i, column=j: alterbuttons(row, column), width=5, height=1, bg="pink", font=self.helv11b, relief=RAISED)
+                        secondthrowButton.grid(row=0, column=1, padx=1, pady=1, sticky="NESW")
+                        roundtotalLabel = tk.Label(roundFrame, text="", width=8, height=2, bg="pink", font=self.helv11b, relief=RAISED)
+                        roundtotalLabel.grid(row=1, columnspan=2, padx=1, pady=1, sticky="NESW")
+                        frameCords.append(nameButton)              
+                scoreFrames.append(buttonCords)
+
+        def alterbuttons(row,column):
+                print(row,column)
+                def exit_btn():
+                        inputscore = score.get()
+                        scoreFrames[row-1][column-1].config(text=inputscore)
+                        win.destroy()
+                        
+                win = tk.Toplevel()
+                win.wm_geometry("%dx%d+%d+%d" % (oWsizex,oWsizey,oWposx,oWposy)) # sets the size of the main window
+                win.resizable(width=False, height=False) # disables the ability to resize the window
+                win.update_idletasks()
+                w = win.winfo_screenwidth()
+                h = win.winfo_screenheight()
+                size = tuple(int(_) for _ in win.geometry().split('+')[0].split('x'))
+                x = w/2 - size[0]/2
+                y = h/2 - size[1]/2
+                win.geometry("%dx%d+%d+%d" % (size + (x, y)))
+                tk.Label(win, text='Please enter score').grid(row=0, column=0)
+                score = Entry(win)
+                score.grid(row=1, column=0)
+                closeBtn = tk.Button(win, text="Exit", command=exit_btn, width=10)
+                closeBtn.grid(row=2, column=0)
+                score.focus_set()
+                        
+        def setplayerName(row,column):
+                def exit_btn():
+                        playerName = player.get()
+                        nameButtons[row-1][column-1].config(text=playerName)
+                        win.destroy()
+                        
+                win = tk.Toplevel()
+                win.wm_geometry("%dx%d+%d+%d" % (oWsizex,oWsizey,oWposx,oWposy)) # sets the size of the main window
+                win.resizable(width=False, height=False) # disables the ability to resize the window
+                win.update_idletasks()
+                w = win.winfo_screenwidth()
+                h = win.winfo_screenheight()
+                size = tuple(int(_) for _ in win.geometry().split('+')[0].split('x'))
+                x = w/2 - size[0]/2
+                y = h/2 - size[1]/2
+                win.geometry("%dx%d+%d+%d" % (size + (x, y)))
+                tk.Label(win, text='Please enter player name').grid(row=0, column=0)
+                player = Entry(win)
+                player.grid(row=1, column=0)
+                closeBtn = tk.Button(win, text="Exit", command=exit_btn, width=10)
+                closeBtn.grid(row=2, column=0)
+                player.focus_set()
+
+        exitButton = tk.Button(canvas, text="Exit", command="", width=10, height=1, bg="pink", font=self.helv11b, relief=RAISED)
+        exitButton.grid(row=10, column=0)
+        nextgameButton = tk.Button(canvas, text="Next Game", command="", width=10, height=1, bg="pink", font=self.helv11b, relief=RAISED)
+        nextgameButton.grid(row=10, column=9)
+        newgameButton = tk.Button(canvas, text="New Game", command="", width=10, height=1, bg="pink", font=self.helv11b, relief=RAISED)
+        newgameButton.grid(row=10, column=11)
+                 
+root = tk.Tk(className= " Warren's Bowling Game")
+root.wm_geometry("%dx%d+%d+%d" % (sizex,sizey,posx,posy)) # sets the size of the main window
+root.resizable(width=False, height=False) # disables the ability to resize the window
+root.update_idletasks()
+w = root.winfo_screenwidth()
+h = root.winfo_screenheight()
+size = tuple(int(_) for _ in root.geometry().split('+')[0].split('x'))
+x = w/2 - size[0]/2
+y = h/2 - size[1]/2
+root.geometry("%dx%d+%d+%d" % (size + (x, y)))
+app = bowling(root)
+root.configure()
+root.mainloop()
+
+
+
